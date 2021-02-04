@@ -64,11 +64,11 @@ let utl__file_rc =    expand("<sfile>")	    " Do not remove this line
         endif
 
         if g:os == "Darwin"
-            let g:utl_cfg_hdl_scm_http_system = "call system('open %u &')"
+             let g:utl_cfg_hdl_scm_http_system = "if '%f' == '<undef>' | call system('open \"%u\" &') | else | call system('open %u#%f &') | endif"
         elseif g:os == "Linux"
-            let g:utl_cfg_hdl_scm_http_system = "call system('xdg-open %u &')"
+             let g:utl_cfg_hdl_scm_http_system = "if '%f' == '<undef>' | call system('xdg-open \"%u\" &') | else | call system('xdg-open %u#%f &') | endif"
         elseif g:os == "Windows"
-            let g:utl_cfg_hdl_scm_http_system = "call system('start '' %u')"
+             let g:utl_cfg_hdl_scm_http_system = "if '%f' == '<undef>' | call system('start \"%u\" &') | else | call system('start %u#%f &') | endif"
         endif
 
     endif

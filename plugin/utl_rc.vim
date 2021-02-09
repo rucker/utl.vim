@@ -55,41 +55,21 @@ let utl__file_rc =    expand("<sfile>")	    " Do not remove this line
     "	    utl_cfg_hdl_scm_http__wget below
     "
     if !exists("g:utl_cfg_hdl_scm_http_system")
+        if !exists("g:os")
+            if has("win64") || has("win32") || has("win16")
+                let g:os = "Windows"
+            else
+                let g:os = substitute(system('uname'), '\n', '', '')
+            endif
+        endif
 
-	if has("win32")
-	    let g:utl_cfg_hdl_scm_http_system = 'silent !cmd /q /c start "dummy title" "%u"'
-	    "let g:utl_cfg_hdl_scm_http_system = 'silent !start C:\Program Files\Internet Explorer\iexplore.exe %u#%f' 
-	    "let g:utl_cfg_hdl_scm_http_system = 'silent !start C:\Program Files\Mozilla Firefox\firefox.exe %u#%f'
-
-	elseif has("unix")
-
-	    " TODO: Standard Handler for Unixes that can be shipped
-	    "	    preconfigured with next utl.vim release
-	    "	    Probably to distinguish different Unix/Linux flavors.
-	    "
-	    "	    Proposed for Ubuntu/Debian by Jeremy Cantrell
-	    "	    to use xdg-open program
-	    "	    'silent !xdg-open %u'  <- does this work?
-	    "
-	    " 2nd best solution: explicitly configured browser:
-	    "
-	    "	Konqueror
-	    "let g:utl_cfg_hdl_scm_http_system = "silent !konqueror '%u#%f' &"
-	    "
-	    "	Lynx Browser.
-	    "let g:utl_cfg_hdl_scm_http_system = "!xterm -e lynx '%u#%f'"
-	    "
-	    "	Firefox
-	    "	Check if an instance is already running, and if yes use it, else start firefox.
-	    "	See <URL:http://www.mozilla.org/unix/remote.html> for mozilla/firefox -remote control
-	    "let g:utl_cfg_hdl_scm_http_system = "silent !firefox -remote 'ping()' && firefox -remote 'openURL( %u )' || firefox '%u#%f' &"
-
-	endif
-	" else if MacOS
-	" ??
-	"let g:utl_cfg_hdl_scm_http_system = "silent !open -a Safari '%u#%f'"
-	"
-	"}
+        if g:os == "Darwin"
+             let g:utl_cfg_hdl_scm_http_system = "if '%f' == '<undef>' | call system('open \"%u\" &') | else | call system('open %u#%f &') | endif"
+        elseif g:os == "Linux"
+             let g:utl_cfg_hdl_scm_http_system = "if '%f' == '<undef>' | call system('xdg-open \"%u\" &') | else | call system('xdg-open %u#%f &') | endif"
+        elseif g:os == "Windows"
+             let g:utl_cfg_hdl_scm_http_system = "if '%f' == '<undef>' | call system('start \"%u\" &') | else | call system('start %u#%f &') | endif"
+        endif
 
     endif
 
